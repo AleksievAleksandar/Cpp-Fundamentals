@@ -10,10 +10,10 @@ private:
 	int increase = 1;
 	size_t maxSymb = 0;
 	size_t getRight = 0;
-	bool visitedRow[120]{};
-	bool visitedCol[120]{};
+	bool visited[120][120]{};
+	
 
-	void printMatrix(std::vector<std::vector<char>> &matrix)
+	void printMatrix(std::vector<std::vector<char>>& matrix)
 	{
 		for (size_t i = 0; i < matrix.size(); i++)
 		{
@@ -27,91 +27,97 @@ private:
 
 
 public:
-	void clearGlitches(std::vector<std::vector<char>> &matrix)
+	void clearGlitches(std::vector<std::vector<char>>& matrix)
 	{
 		for (size_t i = 0; i < matrix.size(); i++)
 		{
 			for (size_t a = 0; a < matrix.size(); a++)
 			{
-				if (matrix[i][a] != '.' && visitedCol[a] != true && visitedRow[i] != true)
+				if (matrix[i][a] != '.' && visited[i][a] != true)
 				{
 					findedSymbol = matrix[i][a];
 					getDown = i;
-					increase = a;
-					//getRight = a;
 					maxSymb = 0;
 					size_t row = 0;
 					size_t col = 0;
 					while (matrix[getDown][a] == findedSymbol)
 					{
-						getDown++;					
+						getDown++;
 						maxSymb++;
+						if (getDown >= matrix.size())
+						{
+							break;
+						}
 					}
 					getDownHalf = maxSymb / 2;
-					row = getDownHalf;
+					row = getDownHalf + i;
 					col = a;
-					visitedRow[row] = true;
-					visitedCol[col] = true;
+					visited[row][col] = true;
 
-					//up to down to right increase
-					getDown = i;
-					size_t getRight = a + 1;
-					for (size_t c = 0; c <= getDownHalf; c++)
+					if (maxSymb > 1)
 					{
-						for (size_t b = a; b < getRight; b++)
+						//up to down to right increase
+						getDown = i;
+						int getRight = a + 1;
+						for (size_t c = 0; c <= getDownHalf; c++)
 						{
-							matrix[getDown][b] = '.';
+							for (size_t b = a; b < getRight; b++)
+							{
+								matrix[getDown][b] = '.';
+							}
+							getDown++;
+							getRight++;
 						}
-						getDown++;
-						getRight++;
-					}
 
-					//up to down to left decrease
-					getDown = i;
-					getRight = a - 1;
-					for (size_t c = 0; c <= getDownHalf; c++)
-					{
-						for (size_t b = a - 1; b > getRight; b--)
+						//up to down to left decrease
+						getDown = i;
+						getRight = a - 1;
+						for (size_t c = 0; c <= getDownHalf; c++)
 						{
-							matrix[getDown][b] = '.';
+							for (int b = a - 1; b > getRight; b--)
+							{
+								matrix[getDown][b] = '.';
+							}
+							getDown++;
+							getRight--;							
 						}
-						getDown++;
-						getRight--;
-					}
-					//this is the end of the up first half of the Glitch
-					
-					//down to down to left increase
-					getDown = getDownHalf + i + 1;
-					getRight = getDownHalf + a;
-					for (size_t c = 0; c < getDownHalf; c++)
-					{
-						for (size_t b = a; b < getRight; b++)
-						{
-							matrix[getDown][b] = '.';
-						}
-						getDown++;
-						getRight--;
-					}
+						//this is the end of the up first half of the Glitch
 
-					//down to down to left decrease
-					getDown = getDownHalf + i + 1;
-					getRight = a - getDownHalf;
-					for (size_t c = 0; c < getDownHalf - 1; c++)
-					{
-						for (size_t b = a - 1; b > getRight; b--)
+						//down to down to left increase
+						getDown = getDownHalf + i + 1;
+						getRight = getDownHalf + a;
+						for (size_t c = 0; c < getDownHalf; c++)
 						{
-							matrix[getDown][b] = '.';
+							for (size_t b = a; b < getRight; b++)
+							{
+								matrix[getDown][b] = '.';
+							}
+							getDown++;
+							getRight--;
 						}
-						getDown++;
-						getRight++;
+
+						//down to down to left decrease
+						getDown = getDownHalf + i + 1;
+						getRight = a - getDownHalf;
+						for (size_t c = 0; c < getDownHalf - 1; c++)
+						{
+							for (size_t b = a - 1; b > getRight; b--)
+							{
+								matrix[getDown][b] = '.';
+							}
+							getDown++;
+							getRight++;
+						}
+
+						matrix[row][col] = findedSymbol;
+						std::cout << std::endl;
+						//printMatrix(matrix);
 					}
-					matrix[row][col] = findedSymbol;
-					std::cout << std::endl;
-					printMatrix(matrix);
 				}
 			}
-		
+
 		}
+		printMatrix(matrix);
 	}
 };
 
@@ -138,7 +144,7 @@ int main()
 	Glitche glitch;
 	glitch.clearGlitches(matrix);
 
-	int a;
-	std::cin >> a;
+	//int a;
+	//std::cin >> a;
 	return 0;
 }
