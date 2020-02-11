@@ -92,6 +92,7 @@ int main()
 						persons[a].friends.push_back(persons[i]);
 					}
 				}
+				break; //new
 			}
 		}
 		getNameStream.clear();
