@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 class Person
 {
@@ -9,6 +10,12 @@ public:
 	std::string profession;
 	std::vector<Person> friends;
 };
+
+bool operator == (const Person &a, const Person &b)
+{
+	return a.name == b.name;
+}
+
 
 int main()
 {
@@ -61,7 +68,7 @@ int main()
 		bool getFirstName = false;
 		std::pair<std::string, std::string> tempFriends;
 		while (!getNameStream.eof())
-		{			
+		{
 			if (!getFirstName)
 			{
 				getFirstName = true;
@@ -98,7 +105,7 @@ int main()
 	getNameStream.clear();
 	userInputStr.clear();
 	std::getline(std::cin, userInputStr);
-	
+
 	while (userInputStr != "---")
 	{
 		lookUp.push_back(userInputStr);
@@ -106,52 +113,79 @@ int main()
 	}
 
 	
-	std::ostringstream info;
 	for (size_t i = 0; i < lookUp.size(); i++)
 	{
-		bool find = false;
-		bool findProfession = false;
+		std::string prof;
+		std::vector<Person> queue;
+		std::vector<Person> visitedTemp;
 		for (size_t a = 0; a < persons.size(); a++)
 		{
 			if (lookUp[i] == persons[a].name)
 			{
-				for (size_t j = 0; j < persons.size(); j++)
+				prof = persons[a].profession;
+				visitedTemp.push_back(persons[a]);
+				for (size_t c = 0; c < persons[a].friends.size(); c++)
 				{
-					find = false;
-					findProfession = false;
-					if (persons[a].profession == persons[j].profession && a != j)
-					{
-						findProfession = true;
-						for (size_t k = 0; k < persons[j].friends.size(); k++)
-						{
-							if (persons[j].friends[k].name == persons[a].name)
-							{
-								find = true;
-								break;
-							}
-						}
-						if (!find)
-						{
-							info << persons[j].name << " ";
-							find = false;
-						}
-					}
+					queue.push_back(persons[a].friends[c]);
+					visitedTemp.push_back(persons[a].friends[c]);
 				}
-				if (!findProfession)
-				{
-					info << "-\n";					
-				}
-				else
-				{
-					info << "\n";
-				}
-				
 				break;
 			}
 		}
+
+		//already take the friends of the first person
+		//start iteration of them
+
+		std::vector<Person> futureFriends;
+
+		for (size_t j = 0; j < queue.size(); j++)
+		{
+			for (size_t k = 0; k < persons.size(); k++)
+			{
+				if (queue[j].name == persons[k].name)
+				{
+					for (size_t v = 0; v < persons[k].friends.size(); v++)
+					{
+						if (!std::count(visitedTemp.begin(), visitedTemp.end(), persons[k].friends[v]))
+						{
+							futureFriends.push_back(persons[k].friends[v]);
+							visitedTemp.push_back(persons[k].friends[v]);
+							queue.push_back(persons[k].friends[v]);
+						}
+					}
+					break; //new
+				}
+			}
+		}
+
+		bool findTargetProfession = false;
+		std::vector<std::string> nameToPrint;
+		for (size_t p = 0; p < futureFriends.size(); p++)
+		{
+			if (prof == futureFriends[p].profession)
+			{
+				findTargetProfession = true;
+				nameToPrint.push_back(futureFriends[p].name);
+			}
+		}	
+		if (!findTargetProfession)
+		{
+			std::cout << "-\n";
+		}
+		else
+		{
+			if (findTargetProfession)
+			{
+				std::sort(nameToPrint.begin(), nameToPrint.end());
+				for (size_t x = 0; x < nameToPrint.size(); x++)
+				{
+					std::cout << nameToPrint[x] << " ";
+				}
+				std::cout << "\n";
+			}			
+		}
 	}
 
-	std::cout << info.str();
 	int a;
 	std::cin >> a;
 	return 0;
