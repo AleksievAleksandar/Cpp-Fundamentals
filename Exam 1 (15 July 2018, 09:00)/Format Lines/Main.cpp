@@ -8,7 +8,7 @@ int main()
 
 	std::stringstream infoStream;
 
-	while (getUserInputStr != "###")
+	while (getUserInputStr != "###" && getUserInputStr != "### ")
 	{
 		infoStream << getUserInputStr << " ";
 		infoStream.clear();
@@ -25,11 +25,19 @@ int main()
 	while (infoStream >> word)
 	{
 		sizeWords += word.size();
-		sizeWords++;
+		if (sizeWords < width)
+		{
+			sizeWords++;
+		}
 
 		if (sizeWords <= width)
 		{
 			toPrint << word << " ";
+			if (sizeWords == width)
+			{
+				toPrint << "\n";
+				sizeWords = 0;
+			}
 		}
 		else if (word.size() >= width)
 		{
@@ -38,12 +46,15 @@ int main()
 		else
 		{
 			toPrint << "\n";
+			toPrint << word << " ";
+			sizeWords = word.size();
+			if (sizeWords < width)
+			{
+				sizeWords++;
+			}
 		}
 	}
 
 	std::cout << toPrint.str();
-
-	int a;
-	std::cin >> a;
 	return 0;
 }
