@@ -7,10 +7,11 @@ int main()
 	std::getline(std::cin, getUserInputStr);
 
 	std::stringstream infoStream;
-	
+
 	while (getUserInputStr != "###")
 	{
 		infoStream << getUserInputStr << " ";
+		infoStream.clear();
 		std::getline(std::cin, getUserInputStr);
 	}
 
@@ -21,14 +22,18 @@ int main()
 	std::string word;
 	size_t sizeWords = 0;
 	std::ostringstream toPrint;
-	while (!infoStream.eof())
+	while (infoStream >> word)
 	{
-		infoStream >> word;
 		sizeWords += word.size();
+		sizeWords++;
 
 		if (sizeWords <= width)
 		{
-			toPrint << word;
+			toPrint << word << " ";
+		}
+		else if (word.size() >= width)
+		{
+			toPrint << word << "\n";
 		}
 		else
 		{
