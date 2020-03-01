@@ -142,7 +142,7 @@ int main()
 							allMessages[i].clearInterference();
 						}					
 					}
-					std::sort(allMessages.begin(), allMessages.end(), [&](const Message& a, const Message& b) {return a.priority > b.priority; });
+					std::sort(allMessages.begin(), allMessages.end(), [&allMessages](const Message& a, const Message& b) {return a.priority > b.priority; });
 					bool noMessage = true;
 					for (size_t j = 0; j < allMessages.size(); j++)
 					{
