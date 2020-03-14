@@ -1,5 +1,4 @@
 #include "IndexedSet.h"
-#pragma once
 
 IndexedSet::IndexedSet():
 	valuesArray(nullptr)
@@ -11,14 +10,21 @@ IndexedSet::IndexedSet(const IndexedSet& other)
 	if (this != &other)
 	{
 		this->valuesSet = other.valuesSet;
-		this->valuesArray = other.valuesArray;
+		this->valuesArray = nullptr;
 	}
 }
 
 void IndexedSet::add(const Value& v)
 {
 	this->valuesSet.insert(v);
-	delete[] this->valuesArray;
+	if (this->valuesArray != nullptr)
+	{
+		delete[] this->valuesArray;
+	}
+	else
+	{
+		valuesArray = nullptr;
+	}
 }
 
 size_t IndexedSet::size() const
@@ -28,7 +34,7 @@ size_t IndexedSet::size() const
 
 const Value& IndexedSet::operator[](size_t index)
 {
-	if (index < valuesSet.size())
+	if (index < valuesSet.size() && valuesArray == nullptr)
 	{
 		this->valuesArray = new Value[this->valuesSet.size()];
 		size_t cnt = 0;
@@ -39,20 +45,33 @@ const Value& IndexedSet::operator[](size_t index)
 		}
 		return valuesArray[index];
 	}
+	else
+	{
+		return valuesArray[index];
+	}
 }
 
 IndexedSet& IndexedSet::operator=(const IndexedSet& other)
 {
-	this->valuesSet = other.valuesSet;
-	delete[] this->valuesArray;
-	for (size_t i = 0; i < this->valuesSet.size(); i++)
+	if (&other == this)
 	{
-		this->valuesArray[i] = other.valuesArray[i];
+		return *this;
 	}
-	return *this;
+	else
+	{
+		this->valuesSet = other.valuesSet;
+		if (this->valuesArray != nullptr)
+		{
+			delete[] this->valuesArray;
+			this->valuesArray = nullptr;
+		}	
+		return *this;
+	}
 }
 
 IndexedSet::~IndexedSet()
 {
 	delete[] this->valuesArray;
+	this->valuesArray = nullptr;
 }
+
