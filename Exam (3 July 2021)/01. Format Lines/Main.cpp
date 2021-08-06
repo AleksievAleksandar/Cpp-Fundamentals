@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-std::stringstream getText()
+std::stringstream getUserRawInput()
 {
 	std::stringstream rawData;
 	std::string line;
@@ -28,6 +28,13 @@ std::vector<std::string> format(std::stringstream& rawData, const int textWidth)
 	{
 		if (word.size() >= textWidth)
 		{
+			//if line container is not empty we must take his content
+			//and after that we must set it to empty
+			if (!line.empty())
+			{
+				result.push_back(line);
+				line.clear();
+			}
 			result.push_back(word);
 		}
 		else
@@ -35,7 +42,7 @@ std::vector<std::string> format(std::stringstream& rawData, const int textWidth)
 			if (line.size() + word.size() <= textWidth)
 			{
 				line += word;
-				
+
 				if (line.size() + emptySpace >= textWidth)
 				{
 					result.push_back(line);
@@ -55,7 +62,8 @@ std::vector<std::string> format(std::stringstream& rawData, const int textWidth)
 			}
 		}
 	}
-	
+
+	//if the container still has contents we must take it
 	if (!line.empty())
 	{
 		result.push_back(line);
@@ -67,8 +75,8 @@ std::vector<std::string> format(std::stringstream& rawData, const int textWidth)
 int main()
 {
 	std::stringstream rawData;
-	rawData = getText();
-	
+	rawData = getUserRawInput();
+
 	int width = 0;
 	std::cin >> width;
 
